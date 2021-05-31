@@ -1,0 +1,170 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <% if (isAuthenticated) { %>
+        <form class="product-form" action="/admin/search-product" method="GET" enctype="multipart/form-data">
+            <div class="form-control">
+                <!-- <label for="new_comment">Comment</label> -->
+                <input
+                class="form-input-material" style="border-color: #00695c;"
+                    type="text"
+                    name="search"
+                    id="search"
+                    value="">
+                    <input type="hidden" name="title" value="true">
+            
+           
+            </div>
+            <button class="btn" type="submit" >Search</button>
+        </form>
+        
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+                <% for (let product of prods) { %>
+                    <article class="card product-item">
+                        <header class="card__header">
+                            <h1 class="product__title"><%= product.title %></h1>
+                        </header>
+                        <div class="card__image">
+                            <img src="/<%= product.imageUrl %>"
+                                alt="<%= product.title %>">
+                        </div>
+                        <div class="card__content">
+                            <h2 class="product__price"><%= product.price %></h2>
+                            <p class="product__description"><%= product.description %></p>
+                            <p class="product__description" style="font-style: italic;"><% if (product.adopted) { %> Adopted <% } else { %> Waiting for Adoption <% } %></p>
+                            
+                        </div>
+                        <!-- <div class="card__content"> -->
+                            <% for (let com of product.comments) { %>
+                                <div class="comment-thread">
+                                    <!-- Comment 1 start -->
+                                    <div class="comment" id="comment-1">
+                                        <div class="comment-heading">
+                                            <div class="">
+                                                <img src="/images/img_avatar.png" alt="Avatar" class="avatar">
+                                                <!-- <button type="button">
+                                                    <span aria-hidden="true">&#9650;</span>
+                                                    <span class="sr-only">Vote up</span>
+                                                </button>
+                                                <button type="button">
+                                                    <span aria-hidden="true">&#9660;</span>
+                                                    <span class="sr-only">Vote down</span>
+                                                </button> -->
+                                            </div>
+                                            <div class="comment-info">
+                                                <a href="#" class="comment-author"><%= com.id %></a>
+                                                <p class="m-0">
+                                                    22 points &bull; 4 days ago
+                                                </p>
+                                            </div>
+                                        </div>
+                                
+                                        <div class="comment-body">
+                                            <p>
+                                                <%= com.data %>
+                                                
+                                            </p>
+
+                                            
+                                            <!-- <button type="button">Reply</button> -->
+                                            <!-- <button type="button">Flag</button> -->
+                                        </div>
+                                        <% for (let rep of com.replies) { %>
+                                        <div class="replies">
+                                            <!-- Comment 2 start -->
+                                            <div class="comment" id="comment-2">
+                                                <div class="comment-heading">
+                                                    <div class="">
+                                                        <img src="/images/avatar2.png" alt="Avatar" class="avatar">
+                                                        <!-- <button type="button">
+                                                            <span aria-hidden="true">&#9650;</span>
+                                                            <span class="sr-only">Vote up</span>
+                                                        </button>
+                                                        <button type="button">
+                                                            <span aria-hidden="true">&#9660;</span>
+                                                            <span class="sr-only">Vote down</span>
+                                                        </button> -->
+                                                    </div>
+                                                    <div class="comment-info">
+                                                        <a href="#" class="comment-author"> <%= rep.id_reply %></a>
+                                                        <p class="m-0">
+                                                            4 points &bull; 3 days ago
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                
+                                                <div class="comment-body">
+                                                    <p>
+                                                        <%= rep.data_reply %>  
+                                                    </p>
+                                                    
+                                                    <!-- <button type="button">Reply</button> -->
+                                                    <!-- <button type="button">Flag</button> -->
+                                                </div>
+                                            </div>
+                                            <!-- Comment 2 end -->
+                                
+                                            <!-- <a href="#load-more">Load more replies</a> -->
+                                        </div>
+                                        <% } %>
+                                        <form class="product-form" action="/admin/add-reply" method="POST" enctype="multipart/form-data">
+                                            <div class="form-control">
+                                                <!-- <label for="new_comment">Comment</label> -->
+                                                <input
+                                                class="form-input-material"
+                                                    type="text"
+                                                    name="reply"
+                                                    id="reply"
+                                                    value="">
+                                            </div>
+                                            <input type="hidden" value="<%= com.data %>" name="current_comment">
+                                            <input type="hidden" value="<%= com._id %>" name="comment_id">
+                                            <input type="hidden" value="<%= product._id %>" name="productId">
+                                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                            <button class="button-reply" type="submit">Reply</button>
+                                        </form>
+                                    </div>
+                                    <!-- Comment 1 end -->
+                                </div>
+                            <% } %>
+                        <!-- </div> -->
+                        <div>
+                            <form class="product-form" action="/admin/edit-comment" method="POST" enctype="multipart/form-data">
+                                <div class="form-control">
+                                    <!-- <label for="new_comment">Comment</label> -->
+                                    <input
+                                        class="form-input-material"
+                                        type="text"
+                                        name="new_comment"
+                                        id="new_comment"
+                                        value="">
+                                </div>
+                                <input type="hidden" value="<%= product.comments %>" name="comments">
+                                <input type="hidden" value="<%= product._id %>" name="productId">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button class="button" type="submit">Add comment</button>
+                            </form>
+                        </div>
+                        <div class="card__actions">
+                            <% if (isAuthenticated && !product.adopted) { %>
+                                <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                            <% } %>
+                        </div>
+                    </article>
+                <% } %>
+            </div>
+            <%- include('../includes/pagination.ejs') %>
+            <% } %>
+        <% } else if(isAuthenticated){ %>
+            <h1>No Products Found!</h1>
+        <% }else { %>
+            <h1>Welcome !!! Please login or Signup </h1>
+            <% } %>
+    </main>
+<%- include('../includes/end.ejs') %>
