@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PDFDocument = require('pdfkit');
-const stripe = require('stripe')('sk_test_51IviiFH8Rg3z634cD7yv52St4qfzyrtaj9eGxbv3LLyYmdt3dEk7hIgjYYvTuX7r7dXa8pliIHYQnQwsmvIvkQjE00mxOwIQYV');
+//const stripe = require('stripe')('sk_test_51IviiFH8Rg3z634cD7yv52St4qfzyrtaj9eGxbv3LLyYmdt3dEk7hIgjYYvTuX7r7dXa8pliIHYQnQwsmvIvkQjE00mxOwIQYV');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
@@ -174,7 +174,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.postOrder = (req, res, next) => {
     // Get the payment token ID submitted by the form
     var product_id;
-    const token = req.body.stripeToken;
+    //const token = req.body.stripeToken;
     let totalSum = 0;
     console.log('req.user ' + req.user);
     console.log("req.body.name "+ req.body.name);
@@ -212,18 +212,18 @@ exports.postOrder = (req, res, next) => {
 
 
 
-            const charge = stripe.charges.create({
-                amount: totalSum * 100,
-                currency: 'usd',
-                description: 'Your Order',
-                source: token,
-                metadata: { order_id: result._id.toString() }
-            });
+            // const charge = stripe.charges.create({
+            //     amount: totalSum * 100,
+            //     currency: 'usd',
+            //     description: 'Your Order',
+            //     source: token,
+            //     metadata: { order_id: result._id.toString() }
+            // });
             return req.user.clearCart();
         })
         .then(() => {
             console.log('product id ' + ObjectId(product_id) );
-            Product.update({ _id: ObjectId(product_id) },{"$set":{"adopted":true}})
+            Product.updateOne({ _id: ObjectId(product_id) },{"$set":{"adopted":true}})
             
              .catch(err => res.status(422).json(err));
             res.redirect('/orders');
