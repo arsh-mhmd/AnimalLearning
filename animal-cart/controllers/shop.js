@@ -188,7 +188,7 @@ exports.postOrder = (req, res, next) => {
             const products = user.cart.items.map(i => {
                 return { quantity: i.quantity, product: { ...i.productId._doc } };
             });
-           // console.log('products '+ user.cart.items.productId);
+           // console.log('products '+ user.cart.items.productId); 
            user.cart.items.forEach(p => {
             console.log('product' + p.productId._id ); 
             product_id = p.productId._id.toString();
