@@ -1,4 +1,4 @@
-# Shopping cart
+# Animal Adoption
 
 In our app, users can buy/sell products. To buy, a user adds items to his/her cart, pays online, and views his/her invoices. To sell a product, s/he adds its title, image, price, and short description.
 
